@@ -19,7 +19,9 @@
     },
     "backend": {
       "root": "backend",
-      "routePrefix": "/_/backend"
+      "routePrefix": "/api",
+      "framework": "django",
+      "entrypoint": "eportfolio_backend.wsgi:app"
     }
   }
 }
