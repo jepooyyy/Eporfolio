@@ -169,10 +169,10 @@ const LivePreviewSimulator = ({ imageSrc, detections: externalDetections }) => {
       transition={{ duration: 0.6 }}
       className="mb-10 rounded-3xl border border-slate-700 bg-slate-900/70 p-6 shadow-2xl shadow-emerald-500/20"
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
         <div>
           <h3 className="text-2xl font-bold">Live CV Inference Simulator</h3>
-          <p className="text-sm text-slate-400 mt-1">Output preview with sample bird detections.</p>
+          <p className="text-sm text-slate-400 mt-1">Preview the uploaded photo with sample bird detections overlaid in real time.</p>
         </div>
         <button
           onClick={() => setIsRunning(!isRunning)}
@@ -189,9 +189,9 @@ const LivePreviewSimulator = ({ imageSrc, detections: externalDetections }) => {
             <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full">
               {renderDetections.map((det) => (
                 <g key={det.id}>
-                  <rect x={det.x} y={det.y} width={det.w} height={det.h} fill="none" stroke="#3b82f6" strokeWidth="1.2" />
-                  <rect x={det.x} y={det.y - 4} width={det.w} height="4" fill="#3b82f6" opacity="0.8" />
-                  <text x={det.x + 0.7} y={det.y - 1} fontSize="2.5" fill="#ffffff" fontWeight="bold" fontFamily="monospace">
+                  <rect x={det.x} y={det.y} width={det.w} height={det.h} fill="none" stroke="#3b82f6" strokeWidth="1.3" />
+                  <rect x={det.x} y={det.y - 4} width={det.w} height="4" fill="#3b82f6" opacity="0.85" />
+                  <text x={det.x + 0.8} y={det.y - 1} fontSize="2.5" fill="#ffffff" fontWeight="bold" fontFamily="monospace">
                     {det.label} {det.confidence.toFixed(1)}%
                   </text>
                 </g>
@@ -223,18 +223,34 @@ const LivePreviewSimulator = ({ imageSrc, detections: externalDetections }) => {
         )}
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-4">
-        <div className="rounded-lg bg-slate-800/50 p-3">
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div className="rounded-lg bg-slate-800/50 p-4">
           <p className="text-xs text-slate-400 uppercase tracking-wide">Model</p>
           <p className="text-lg font-bold text-cyan-400 mt-1">YOLOv11n</p>
         </div>
-        <div className="rounded-lg bg-slate-800/50 p-3">
+        <div className="rounded-lg bg-slate-800/50 p-4">
           <p className="text-xs text-slate-400 uppercase tracking-wide">Latency</p>
           <p className="text-lg font-bold text-emerald-400 mt-1">22ms</p>
         </div>
-        <div className="rounded-lg bg-slate-800/50 p-3">
+        <div className="rounded-lg bg-slate-800/50 p-4">
           <p className="text-xs text-slate-400 uppercase tracking-wide">Birds</p>
           <p className="text-lg font-bold text-indigo-400 mt-1">{detectedCount}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-slate-700 bg-slate-900/80 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm uppercase tracking-wide text-slate-400">Detection Summary</p>
+          <p className="text-sm text-cyan-300">Overlay sample</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {renderDetections.map((det) => (
+            <div key={det.id} className="rounded-lg border border-slate-700 bg-slate-950/80 p-3 text-sm text-slate-300">
+              <p className="font-semibold text-cyan-300">{det.label}</p>
+              <p>Confidence: {det.confidence.toFixed(1)}%</p>
+              <p>Box: {Math.round(det.w)}x{Math.round(det.h)} at ({Math.round(det.x)},{Math.round(det.y)})</p>
+            </div>
+          ))}
         </div>
       </div>
     </motion.div>
@@ -436,8 +452,11 @@ function App() {
       // Try to connect to the backend with a timeout
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+      
+      // Use environment variable for API URL, fallback to localhost
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-      const response = await fetch('http://localhost:8000/api/detect/', {
+      const response = await fetch(`${apiUrl}/api/detect/`, {
         method: 'POST',
         body: formData,
         signal: controller.signal
