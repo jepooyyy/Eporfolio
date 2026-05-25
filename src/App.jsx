@@ -453,8 +453,8 @@ function App() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
       
-      // Use environment variable for API URL, fallback to localhost
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+      // Use environment variable for API URL, fallback to localhost or current domain
+      const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8000');
 
       const response = await fetch(`${apiUrl}/api/detect/`, {
         method: 'POST',
@@ -732,9 +732,9 @@ function App() {
           <div className="max-w-3xl mx-auto">
             <TimelineItem
               year="2025"
-              title="Student Ambassador"
-              role="AI & Computer Vision Advocate"
-              description="Leading initiatives to promote AI literacy and computer vision applications in educational communities. Organizing workshops and mentoring junior developers."
+              title="Programmer — Group Dev"
+              role="Software Developer"
+              description="Core programmer for the group's AI and detection projects; developing tools, integrating models, and mentoring team members on engineering best practices."
               isLeading={false}
             />
             <TimelineItem
