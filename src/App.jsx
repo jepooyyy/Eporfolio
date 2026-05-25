@@ -746,7 +746,7 @@ function App() {
             />
             <TimelineItem
               year="2024"
-              title="Sustainable Tourism Tech Lead"
+              title="Environmental Tech Lead"
               role="Innovation & Technology Advocate"
               description="Spearheading technology integration for sustainable tourism initiatives. Leveraging computer vision and data analytics to optimize environmental impact."
               isLeading={false}
